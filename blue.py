@@ -42,7 +42,7 @@ while True:
 			if "cd" in cmd:
 				try:
 					os.chdir(cmd[3::])
-					rsp = subprocess.getoutput(cmd)
+					rsp = "Currently in" + str(os.getcwd())
 				except:
 					rsp = "No such directory"
 			else:
