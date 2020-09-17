@@ -2,6 +2,7 @@ import socket
 import time
 from datetime import datetime as dt
 import os
+import subprocess
 
 HOST = "0.0.0.0"  # all local IPs
 ports = [80, 8080, 443, 20, 21, 23]
@@ -27,6 +28,10 @@ if "hellshell_logs" not in os.listdir():
 logfile = "hellshell_logs/" + dt.now().strftime("%m_%d%H_%M") + ".log"
 logger = open(logfile, 'w')
 open_conn = False
+
+print(subprocess.getoutput('cat logo'))
+
+exit()
 while True:
 	try:
 		if not open_conn:
