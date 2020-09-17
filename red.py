@@ -31,7 +31,13 @@ open_conn = False
 
 print(subprocess.getoutput('cat logo'))
 
-exit()
+print("HellShell will attempt to open a pipe on 1 of 6 ports")
+print("The Shell is persistent - an exception or error just causes the pipe to close, and a new connection is established on the next port")
+print("Inactive pipes are closed on the client's side; when you come back to the server, an exception is thrown, and a new pipe will be established")
+print("To manually move to a new port, execute: porthop")
+print("To gracefully close the Shell, execute: endme")
+print("Everything you type and receive in your session is logged and stored in hellshell_logs/")
+
 while True:
 	try:
 		if not open_conn:
